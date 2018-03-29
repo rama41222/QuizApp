@@ -47,15 +47,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(savedInstanceState != null) {
+            mScore = savedInstanceState.getInt("ScoreKey");
+            mIndex = savedInstanceState.getInt("IndexKey");
+        } else {
+            mIndex = 0;
+            mScore = 0;
+        }
+
         mTrueBtn = (Button) findViewById(R.id.true_btn);
         mFalseBtn = (Button) findViewById(R.id.false_btn);
         mQuestionTextView = (TextView) findViewById(R.id.question_text);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mScoreTextView = (TextView) findViewById(R.id.score_text);
         mProgressBar.setMax(100);
+        mScoreTextView.setText("Score " + mScore + "/" + mQuestionBank.length);
 
         mQuestion = mQuestionBank[mIndex].getQuestionID();
         mQuestionTextView.setText(mQuestion);
+
+
 
         mTrueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +84,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putInt("ScoreKey", mScore);
+        outState.putInt("IndexKey", mIndex);
     }
 
     private void checkAnswer(boolean answer) {
@@ -94,8 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
         if(mIndex == 0) {
             mProgressBar.setProgress(0);
-            mScore = 0;
-
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Quiz Over");
             alert.setCancelable(false);
@@ -107,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             alert.show();
+            mScore = 0;
+            mIndex = 0;
         }
 
         if(mIndex == mQuestionBank.length-1) {
